@@ -1,0 +1,10 @@
+
+
+http://code.stephenmorley.org/php/diff-implementation/#styling
+
+I am following above link to test code.
+
+I have put them together but in the browser 
+but I am not seeing any nice color table just 
+like author mentioned. I don't know how to 
+includes style code any idea on how to do that?

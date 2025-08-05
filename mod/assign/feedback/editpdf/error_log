@@ -1,0 +1,18 @@
+[16-May-2019 16:08:47 Australia/Sydney] Default exception handler: Your session has most likely timed out. Please log in again. Debug: 
+Error code: invalidsesskey
+* line 494 of /lib/setuplib.php: moodle_exception thrown
+* line 85 of /lib/sessionlib.php: call to print_error()
+* line 35 of /mod/assign/feedback/editpdf/ajax.php: call to require_sesskey()
+
+[16-May-2019 16:09:12 Australia/Sydney] Default exception handler: Your session has most likely timed out. Please log in again. Debug: 
+Error code: invalidsesskey
+* line 494 of /lib/setuplib.php: moodle_exception thrown
+* line 85 of /lib/sessionlib.php: call to print_error()
+* line 35 of /mod/assign/feedback/editpdf/ajax.php: call to require_sesskey()
+
+[27-May-2019 15:49:40 Australia/Sydney] Default exception handler: Your session has most likely timed out. Please log in again. Debug: 
+Error code: invalidsesskey
+* line 494 of /lib/setuplib.php: moodle_exception thrown
+* line 85 of /lib/sessionlib.php: call to print_error()
+* line 35 of /mod/assign/feedback/editpdf/ajax.php: call to require_sesskey()
+

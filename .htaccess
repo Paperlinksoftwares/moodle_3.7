@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+php_value upload_max_filesize 209715200
+php_value post_max_size 209715200
+php_value max_execution_time 600

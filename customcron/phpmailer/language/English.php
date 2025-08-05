@@ -1,0 +1,27 @@
+<?php
+$lang=array();
+$lang['home']="Home";
+$lang['about']="About";
+$lang['course']="Course";
+$lang['contact']="Contact";
+$lang['applynow']="Apply Now";
+$lang['quickcall']="Quick Call";
+$lang['quickenquiry'] = "Quick Enquiry";
+$lang['name'] = "Name";
+$lang['firstname'] = "First Name";
+$lang['lastname'] = "Last Name";
+$lang['email'] = "Email";
+$lang['gender'] = "Gender";
+$lang['phone'] = "Phone";
+$lang['message'] = "Message";
+$lang['above'] = "Above";
+$lang['male'] = "Male";
+$lang['female'] = "Female";
+$lang['suburban'] = "Lives in suburban community";
+$lang['submit'] = "Submit";
+$lang['services'] = "Services";
+$lang['close'] = "Close";
+$lang['callnow'] = "Call now";
+$lang['registernow'] = "Register now";
+$lang['registernowoffer'] = "Register now to get a special offer!";
+$lang['whendoyouplantostudy'] = "When do you plan to study?";

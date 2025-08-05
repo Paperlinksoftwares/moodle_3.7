@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8"/>
+		<title>ACCIT | Timetable Uploader - Moodle</title>
+
+		<!-- Google web fonts -->
+		<link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700" rel='stylesheet' />
+
+		<!-- The main CSS file -->
+		<link href="assets/css/style.css" rel="stylesheet" />
+	</head>
+
+	<body><br/><br/>
+<div style="color: blue; font-size:21px;font-family: Arial, Helvetica, sans-serif; text-align:center;"><strong>ACCIT TIMETABLE UPLOADER</strong></div>
+
+		<form id="upload" method="post" action="upload.php" enctype="multipart/form-data">
+		<div style="color: white; font-size:13px;font-family: Arial, Helvetica, sans-serif;">NOTE: The file name format should be - Term Name-Year-Timetable.pdf e.g T4-2020-Timetable.pdf</div>
+		<p>&nbsp;</p>
+			<div id="drop">
+				Drop Here<br/>
+
+				<a>Browse</a>
+				<input type="file" name="upl" multiple />
+			</div>
+
+			<ul>
+				<!-- The file uploads will be shown here -->
+			</ul>
+
+		</form>
+
+		<footer>
+            <h2><a href="http://accit.nsw.edu.au" target="_blank">ACCIT<a> | Timetable Uploader &copy; 2020</h2>
+           
+        </footer>
+        
+		<!-- JavaScript Includes -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="assets/js/jquery.knob.js"></script>
+
+		<!-- jQuery File Upload Dependencies -->
+		<script src="assets/js/jquery.ui.widget.js"></script>
+		<script src="assets/js/jquery.iframe-transport.js"></script>
+		<script src="assets/js/jquery.fileupload.js"></script>
+		
+		<!-- Our main JS file -->
+		<script src="assets/js/script.js"></script>
+
+
+		<!-- Only used for the demos. Please ignore and remove. --> 
+        <script src="https://cdn.tutorialzine.com/misc/enhance/v1.js" async></script>
+
+	</body>
+</html>

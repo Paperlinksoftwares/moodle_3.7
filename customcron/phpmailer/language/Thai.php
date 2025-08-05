@@ -1,0 +1,27 @@
+<?php
+$lang=array();
+$lang['home']="&#xE2B;&#xE19;&#xE49;&#xE32;&#xE2B;&#xE25;&#xE31;&#xE01;";
+$lang['about']="&#xE40;&#xE01;&#xE35;&#xE48;&#xE22;&#xE27;&#xE01;&#xE31;&#xE1A;&#xE40;&#xE23;&#xE32;";
+$lang['course']="&#xE04;&#xE23;&#xE2D;&#xE23;&#xE4C;&#xE2A;&#xE40;&#xE23;&#xE35;&#xE22;&#xE19;";
+$lang['contact']="&#xE15;&#xE34;&#xE14;&#xE15;&#xE48;&#xE2D;";
+$lang['applynow']="&#xE25;&#xE07;&#xE17;&#xE30;&#xE40;&#xE1A;&#xE35;&#xE22;&#xE19;&#xE40;&#xE25;&#xE22;";
+$lang['quickcall']="&#xE42;&#xE17;&#xE23;&#xE4C; &#xE15;&#xE34;&#xE14;&#xE15;&#xE48;&#xE2D;&#xE2A;&#xE2D;&#xE1A;&#xE16;&#xE32;&#xE21;";
+$lang['quickenquiry']="&#xE2A;&#xE2D;&#xE1A;&#xE16;&#xE32;&#xE21;&#xE02;&#xE49;&#xE2D;&#xE21;&#xE39;&#xE25;&#xE14;&#xE48;&#xE27;&#xE19;";
+$lang['name'] = "&#xE0A;&#xE37;&#xE48;&#xE2D;";
+$lang['email'] = "&#xE2D;&#xE35;&#xE40;&#xE21;&#xE25;";
+$lang['gender'] = "&#xE40;&#xE1E;&#xE28;";
+$lang['phone'] = "&#xE42;&#xE17;&#xE23;&#xE28;&#xE31;&#xE1E;&#xE17;&#xE4C;";
+$lang['above'] = "&#x26;#xE02;&#x26;#xE49;&#x26;#xE32;&#x26;#xE07;&#x26;#xE1A;&#x26;#xE19;";
+$lang['message'] = "&#xE02;&#xE48;&#xE32;&#xE27;&#xE2A;&#xE32;&#xE23;";
+$lang['male'] = "&#xE0A;&#xE32;&#xE22;";
+$lang['female'] = "&#xE2B;&#xE0D;&#xE34;&#xE07;";
+$lang['suburban'] = "&#xE2D;&#xE22;&#xE39;&#xE48;&#xE43;&#xE19;&#xE15;&#xE48;&#xE32;&#xE07;&#xE08;&#xE31;&#xE07;&#xE2B;&#xE27;&#xE31;&#xE14;";
+$lang['submit'] = "&#xE22;&#xE37;&#xE19;&#xE22;&#xE31;&#xE19;";
+$lang['services'] = "&#xE1A;&#xE23;&#xE34;&#xE01;&#xE32;&#xE23;&#xE02;&#xE2D;&#xE07;&#xE40;&#xE23;&#xE32;";
+$lang['close'] = "&#xE1B;&#xE34;&#xE14;";
+$lang['callnow'] = "&#xE42;&#xE17;&#xE23;&#xE14;&#xE48;&#xE27;&#xE19;!";
+$lang['registernow'] = "&#xE25;&#xE07;&#xE17;&#xE30;&#xE40;&#xE1A;&#xE35;&#xE22;&#xE19;";
+$lang['registernowoffer'] = "&#xE25;&#xE07;&#xE17;&#xE30;&#xE40;&#xE1A;&#xE35;&#xE22;&#xE19;&#xE15;&#xE2D;&#xE19;&#xE19;&#xE35;&#xE49;&#xE40;&#xE1E;&#xE37;&#xE48;&#xE2D;&#xE23;&#xE31;&#xE1A;&#xE02;&#xE49;&#xE2D;&#xE40;&#xE2A;&#xE19;&#xE2D;&#xE2A;&#xE38;&#xE14;&#xE1E;&#xE34;&#xE40;&#xE28;&#xE29;!";
+$lang['firstname'] = "&#xE0A;&#xE37;&#xE48;&#xE2D;&#xE08;&#xE23;&#xE34;&#xE07;";
+$lang['lastname'] = "&#xE19;&#xE32;&#xE21;&#xE2A;&#xE01;&#xE38;&#xE25;";
+$lang['whendoyouplantostudy'] = "&#x101E;&#x1004;&#x1039;&#x1018;&#x101A;&#x1039;&#x1001;&#x103A;&#x102D;&#x1014;&#x1039; &#x101E;&#x1004;&#x1039;&#x1037;&#x1021;&#x1010;&#x103C;&#x1000;&#x1039; &#x1005;&#x1010;&#x1004;&#x1039; &#x1031;&#x101C;&#x1037;&#x101C;&#x102C;&#x1019;&#x103D;&#x102C;&#x101C;&#x1032;";

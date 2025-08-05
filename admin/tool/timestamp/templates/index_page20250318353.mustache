@@ -1,0 +1,400 @@
+<html>
+<head>
+<link rel="stylesheet" media="all" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" media="all" type="text/css" href="http://localhost/accit-moodle/accit/admin/tool/timestamp/templates/css/jquery-ui-timepicker-addon.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="http://localhost/accit-moodle/accit/admin/tool/timestamp/templates/css/jquery.modal.min.css" />
+
+<style>
+ul.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+ul.pagination li a.current_page {
+    background-color: #4CAF50;
+    color: white;
+}
+ul.pagination li.dot {
+    color: #000;
+}
+ul.pagination li {display: inline;}
+ul.pagination li a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 1px solid #ddd; /* Gray */
+    margin: 0 4px; 
+}
+ul.pagination li a:hover:not(.active) {
+    background-color: #ddd;
+}
+.info-msg,
+.success-msg,
+.warning-msg,
+.error-msg {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 3px;
+}
+.info-msg {
+  color: #059;
+  background-color: #BEF;
+}
+.success-msg {
+  color: #270;
+  background-color: #DFF2BF;
+}
+.warning-msg {
+  color: #9F6000;
+  background-color: #FEEFB3;
+}
+.error-msg {
+  color: #D8000C;
+  background-color: #FFBABA;
+}
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+.autocomplete-items div:hover {
+  background-color: #e9e9e9; 
+}
+.autocomplete-active {
+  background-color: DodgerBlue !important; 
+  color: #ffffff; 
+}
+.myButton {
+	background-color:#44c767;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:17px;
+	padding:2px 10px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
+}
+.myButton:hover {
+	background-color:#5cbf2a;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+</style>
+</head>
+
+<div><br/>
+<form name="search" autocomplete="off" action="index.php" method="POST">
+  <table>
+    <tr>
+      <td>
+        <div class="autocomplete" style="width:195px;">
+          <input id="coursename" type="text" name="coursename" placeholder="Type your Course Name..." value="{{{postcoursename}}}" >
+          <input id="courseid" type="hidden" name="courseid" value="{{{cid}}}" />
+        </div>
+      </td>
+      <td>
+        <div class="autocomplete" style="width:195px;">
+          <input id="assessmentname" type="text" name="assessmentname" placeholder="Type your Assessment Name..." value="{{{postassessmentname}}}" >
+          <input id="assessmentid" type="hidden" name="assessmentid" value="{{{aid}}}" />
+        </div>
+      </td>
+      <td>
+        <div class="autocomplete" style="width:195px;">
+          <input id="studentname" type="text" name="studentname" placeholder="Type your Student Name..." value="{{{poststudentname}}}" >
+          <input id="studentid" type="hidden" name="studentid" value="{{{sid}}}" />
+        </div>
+      </td>
+      <td>
+        <div class="autocomplete" style="width:195px;">
+          <input id="studentusername" type="text" name="studentusername" placeholder="Type your Student User Name..." value="{{{poststudentusername}}}" >
+          <input id="studentuserid" type="hidden" name="studentuserid" value="{{{suid}}}" />
+        </div>
+      </td>
+      <td>
+        <input class="myButton" type="submit" name="search" id="search" value=" Search "
+               onclick="javascript: if(document.getElementById('coursename').value=='' && 
+                                     document.getElementById('studentname').value=='' && 
+                                     document.getElementById('studentusername').value=='') {
+                            alert('Please select any course or student from the drop down list only!');
+                            return false;
+                         }" />
+      </td>
+      <td>&nbsp;</td>
+      <td>
+        <input class="myButton" type="button" onclick="javascript: window.location.href='index.php?showall=1';" 
+               name="showall" id="showall" value=" Show All " />
+      </td>
+    </tr>
+  </table>
+</form>
+
+<div align="right"><i>Total {{{listcount}}} record(s) found</i></div><br/><br/>
+
+<input class="myButton" style="float: right;" type="button"
+       onclick="javascript: var p = confirm('Are you sure you want to update?'); 
+                 if(p==true) { document.getElementById('f').submit(); } else { return false; }"
+       name="updateallrecords" id="updateallrecords" value=" Update All Records " />
+<br/><br/>
+
+{{#sid}}
+  <div style="float: right;" >
+    <input class="myButton" type="button"
+           onclick="javascript: window.location.href='index.php?showallstudent=1&studentid={{{sid}}}';"
+           name="showallstudent" id="showallstudent" value=" View All " />
+  </div>
+{{/sid}}
+
+<form action="" method="POST" name="f" id="f" autocomplete="off">
+  <table cellspacing="11" cellpadding="10" style="border: 1px solid #aaa;font-size: 14px!important;" width="100%">
+    <tr style="background-color: #ddd; font-weight: bold;">
+      <td>ID</td>
+      <td>
+        <a href="index.php?sorttype=assignment&sort={{{sortval}}}&showallstudent={{{showallstudent}}}" 
+           title="Click to sort">
+          ASSIGNMENT
+        </a>
+      </td>
+	  <!-- NEW COLUMN for Attempt # -->
+      <td>ATTEMPT #</td>
+      <td>NAME</td>
+      <td>
+        <a href="index.php?sorttype=submission&sort={{{sortval}}}&showallstudent={{{showallstudent}}}" 
+           title="Click to sort">
+          SUBMISSION DATE
+        </a>
+      </td>
+      <td>NEW DATE</td>
+      <td>
+        <a href="index.php?sorttype=grades&sort={{{sortval}}}&showallstudent={{{showallstudent}}}" 
+           title="Click to sort">
+          GRADES MODIFIED DATE
+        </a>
+      </td>
+      <td>NEW DATE</td>
+      <td>TRAINER</td>
+      
+      <td>ACTION</td>
+    </tr>
+
+    {{#user}}
+    <tr>
+      <td>{{rowid}}</td>
+      <td>
+        <a href="ajax/assignment.php?id={{assignmentid}}&showallstudent={{{showallstudent}}}" rel="modal:open">
+          {{assignmentname}}
+        </a>
+      </td>
+	  <!-- SHOW the attempt number -->
+      <td>{{attemptnum}}</td>
+      <td>
+        <a href="ajax/user.php?id={{userid}}" rel="modal:open">
+          {{name}}
+        </a>
+      </td>
+      <td>{{timemodified}}</td>
+      <td>
+        <input type="text" name="newdate1_{{rowid}}" id="newdate1_{{rowid}}" value="" 
+               class="newdate1" style="width:105px;"{{submissionexists}} />
+      </td>
+      <td>{{timemodifiedg}}</td>
+      <td>
+        <input type="text" name="newdate2_{{rowid}}" id="newdate2_{{rowid}}" value="" 
+               class="newdate2" style="width:105px;" {{gradeexists}} />
+      </td>
+      <td>{{gradername}}</td>
+
+      
+
+      <td>
+        <input class="myButton" type="submit" name="update" value=" Update "
+               onclick="javascript: 
+                    if(document.getElementById('newdate1_{{rowid}}').value!='' || 
+                       document.getElementById('newdate2_{{rowid}}').value!='') {
+                       var p=confirm('Are you sure you want to update?'); 
+                       if (p==false) { return false; } else { return true; }
+                    }
+                    if(document.getElementById('newdate1_{{rowid}}').value=='' && 
+                       document.getElementById('newdate2_{{rowid}}').value=='') {
+                       alert('Please fill any of the date first!');
+                       return false;
+                    }" />
+      </td>
+    </tr>
+    <input type="hidden" name="updateid" id="updateid" value="{{rowid}}" />
+    <input type="hidden" name="updateidarray[]" id="updateidarray[]" value="{{rowid}}" />
+    <input type="hidden" name="assid[]" id="assid[]" value="{{assignmentid}}" />
+    <input type="hidden" name="userid[]" id="userid[]" value="{{userid}}" />
+    <input type="hidden" name="graderid[]" id="graderid[]" value="{{graderid}}" />
+    <input type="hidden" name="gradeitemid[]" id="gradeitemid[]" value="{{gradeitemid}}" />
+    <input type="hidden" name="itemid[]" id="itemid[]" value="{{itemid}}" />
+    {{/user}}
+
+    {{^user}}
+    <tr><td colspan="10">No records found!</td></tr>
+    {{/user}}
+  </table>
+
+  <input type="hidden" name="page" id="page" value="{{page}}" />
+  <!--
+     <input type="hidden" name="userid" id="userid" value="{{userid}}" />
+     <input type="hidden" name="assid" id="assid" value="{{assignmentid}}" />
+  -->
+  <input type="hidden" name="updateform" id="updateform" value="1" />  
+  <input type="hidden" name="sort" id="sort" value="{{sortvalold}}" />
+  <input type="hidden" name="sorttype" id="sorttype" value="{{sorttype}}" />
+  <input type="hidden" name="showallstudent" id="showallstudent" value="{{{showallstudent}}}" />
+</form>
+</div>
+
+<!-- Example of date/time pickers scripts -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://localhost/accit-moodle/accit/admin/tool/timestamp/templates/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="http://localhost/accit-moodle/accit/admin/tool/timestamp/templates/i18n/jquery-ui-timepicker-addon-i18n.min.js"></script>
+<script type="text/javascript" src="http://localhost/accit-moodle/accit/admin/tool/timestamp/templates/js/jquery-ui-sliderAccess.js"></script>
+
+<script>
+$(function(){
+    $('#tabs').tabs();
+    $('.example-container > pre').each(function(i){
+        eval($(this).text());
+    });
+});
+
+$('.newdate1').datetimepicker({
+    timeInput: true,
+    timeFormat: "hh:mm tt",
+    changeMonth: true,
+    changeYear: true
+});
+$('.newdate2').datetimepicker({
+    timeInput: true,
+    timeFormat: "hh:mm tt",
+    changeMonth: true,
+    changeYear: true
+});
+</script>
+
+<script>
+function autocomplete(inp, arr, type) { 
+  var currentFocus;
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      closeAllLists();
+      if (!val) { return false; }
+      currentFocus = -1;
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      this.parentNode.appendChild(a);
+      for (i = 0; i < arr.length; i++) {
+        var res = arr[i].split("|"); 
+        var idval = res[1];
+        var coursename = res[0];
+        if (coursename.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          b = document.createElement("DIV");
+          b.innerHTML = "<strong>" + coursename.substr(0, val.length) + "</strong>";
+          b.innerHTML += coursename.substr(val.length);
+          b.innerHTML += "<input name='stuid' id='stuid' type='hidden' value='" + idval + "'>";
+          b.innerHTML += "<input name='stuname' id='stuname' type='hidden' value='" + coursename + "'>";
+          b.addEventListener("click", function(e) {
+              if(type==1) {
+                  inp.value = this.getElementsByTagName("input")[1].value; 
+                  document.getElementById("courseid").value = this.getElementsByTagName("input")[0].value; 
+              }
+              else if(type==2) {
+                  inp.value = this.getElementsByTagName("input")[1].value; 
+                  document.getElementById("studentid").value = this.getElementsByTagName("input")[0].value; 
+              }
+              else if(type==3) {
+                  inp.value = this.getElementsByTagName("input")[1].value; 
+                  document.getElementById("studentuserid").value = this.getElementsByTagName("input")[0].value; 
+              }
+              else {
+                  inp.value = this.getElementsByTagName("input")[1].value; 
+                  document.getElementById("assessmentid").value = this.getElementsByTagName("input")[0].value; 
+              }
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) {
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
+
+var final_arr = {{{coursestr}}}; 
+var final_arr_stu = {{{studentsstr}}}; 
+var final_arr_stu_username = {{{studentsstrusername}}}; 
+var final_arr_assessment = {{{assessmentstr}}};
+
+autocomplete(document.getElementById("coursename"), final_arr, '1');
+autocomplete(document.getElementById("studentname"), final_arr_stu, '2');
+autocomplete(document.getElementById("studentusername"), final_arr_stu_username, '3');
+autocomplete(document.getElementById("assessmentname"), final_arr_assessment, '4');
+</script>
+</html>
