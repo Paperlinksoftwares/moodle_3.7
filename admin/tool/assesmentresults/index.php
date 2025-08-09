@@ -49,6 +49,20 @@ $yearoptions = array_map(function($year) use ($selectedyear) {
     return ['year' => $year, 'selected' => ($year == $selectedyear)];
 }, $yearoptions);
 
+$allowedstatus = ['satisfactory','notsatisfactory','notyetgraded','nosubmission','openattempt'];
+$selectedstatus = optional_param('status', null, PARAM_ALPHAEXT);
+if ($selectedstatus === null) {
+    $selectedstatus = isset($SESSION->statusfilter) ? $SESSION->statusfilter : '';
+} else {
+    if ($selectedstatus !== '' && !in_array($selectedstatus, $allowedstatus, true)) {
+        $selectedstatus = '';
+    }
+    $SESSION->statusfilter = $selectedstatus;
+}
+if ($selectedstatus !== '') {
+    $_GET['status'] = $selectedstatus;
+}
+
 $output = $PAGE->get_renderer('tool_assesmentresults');
  
 echo $OUTPUT->header();
@@ -267,6 +281,7 @@ if(isset($_GET['showall']) && $_GET['showall']=='1')
      $SESSION->assessmentname = '';
      $SESSION->sortorder = " order by x.id DESC";
      $sortval = 1;
+     $SESSION->statusfilter = '';
 }
 
 if(@$SESSION->courseid>0 && @$SESSION->studentid=='' && @$SESSION->assessmentid=='')
@@ -821,7 +836,10 @@ if(@$SESSION->courseid!='' || @$SESSION->studentuserid!='' ||  @$SESSION->assess
     $totalrecords = $DB->count_records_sql('SELECT COUNT(1) FROM (' . $sqlcount . ') rc');
 
 
-if(isset($_GET['showallstudent']) && $_GET['showallstudent']==1)
+if($selectedstatus !== '') {
+        $SESSION->showallstudent = 0;
+        $list = $DB->get_records_sql($sql_all);
+    } else if(isset($_GET['showallstudent']) && $_GET['showallstudent']==1)
     {
         $SESSION->showallstudent = 1;
         $list = $DB->get_records_sql($sql_all);
@@ -959,18 +977,43 @@ else
 	WHERE mcl.`course` = '".$list->courseid."' AND mcl.`name` LIKE '%".addslashes($list->assignmentname)." | Observation Checklist%'";
 	//echo '<br/>';
 
-	$list_all_deb2 = $DB->get_record_sql($sql_checklist2);
-	if($list_all_deb2->checklistid>0)
-	{
-	$obs_url = $CFG->wwwroot.'/mod/checklist/view.php?id='.$list_all_deb2->checklistid;
-	}
-	else
-	{
-		$obs_url = '';
-	}
-	
-	
-    $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'timemodified'=>date("F j, Y, g:i a",$list->timemodified),'timemodifiedg'=>$gtimemodified,'gradeexists'=>$grade_exists,'gradername'=>$gradername,'graderid'=>$list->graderid,'gradeitemid'=>$list->gradeitemid,"result"=>$scale_text,"countsubmission"=>$list->countsubmission,'obs_url'=>$obs_url);
+        $list_all_deb2 = $DB->get_record_sql($sql_checklist2);
+        if($list_all_deb2->checklistid>0)
+        {
+        $obs_url = $CFG->wwwroot.'/mod/checklist/view.php?id='.$list_all_deb2->checklistid;
+        }
+        else
+        {
+                $obs_url = '';
+        }
+
+    $cm = get_coursemodule_from_instance('assign', $list->assignmentid, $list->courseid);
+    $cmid = $cm ? $cm->id : 0;
+    $scl = strtolower(trim($scale_text));
+    if ($list->countsubmission == 0) {
+        $statuscode = 'nosubmission';
+        $statuslabel = 'No Submission';
+    } else if ($scl === 'satisfactory') {
+        $statuscode = 'satisfactory';
+        $statuslabel = 'Satisfactory';
+    } else if ($scl === 'not satisfactory') {
+        $statuscode = 'notsatisfactory';
+        $statuslabel = 'Not Satisfactory';
+    } else if (strpos($scl, 'not yet graded') !== false) {
+        $statuscode = 'notyetgraded';
+        $statuslabel = 'Not Yet Graded';
+    } else {
+        $statuscode = 'openattempt';
+        $statuslabel = 'Open Attempt';
+    }
+    $submissionurl = new moodle_url('/mod/assign/view.php', ['id' => $cmid]);
+    $studentsubmissionlink = html_writer::link($submissionurl, 'Open submission');
+    $viewurl  = new moodle_url('/mod/assign/view.php', ['id' => $cmid, 'action' => 'grading']);
+    $gradeurl = new moodle_url('/mod/assign/view.php', ['id' => $cmid, 'rownum' => 0, 'action' => 'grader', 'userid' => $list->userid]);
+    $actionlinks = html_writer::link($viewurl, 'Click to view') . ' | ' .
+                    html_writer::link($gradeurl, 'Click to Grade');
+
+    $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'timemodified'=>date("F j, Y, g:i a",$list->timemodified),'timemodifiedg'=>$gtimemodified,'gradeexists'=>$grade_exists,'gradername'=>$gradername,'graderid'=>$list->graderid,'gradeitemid'=>$list->gradeitemid,"result"=>$scale_text,"countsubmission"=>$list->countsubmission,'obs_url'=>$obs_url,'cmid'=>$cmid,'statuscode'=>$statuscode,'statuslabel'=>$statuslabel,'actionlinks'=>$actionlinks,'studentsubmissionlink'=>$studentsubmissionlink,'studenturl'=>$submissionurl->out(false),'viewurl'=>$viewurl->out(false),'gradeurl'=>$gradeurl->out(false));
             unset($grade_val);
             unset($scale_text);
             unset($timemodified);
@@ -978,9 +1021,16 @@ else
             unset($activitydate);    
 			unset($obs_url);    
 			unset($sql_checklist2);    
-			unset($list_all_deb2);    
-            
+            unset($list_all_deb2);
+
     }
+}
+if ($selectedstatus !== '') {
+    $arr = array_values(array_filter($arr, function($row) use ($selectedstatus) {
+        return $row['statuscode'] === $selectedstatus;
+    }));
+    $totalrecords = count($arr);
+    $arr = array_slice($arr, $pageLimit, $setLimit);
 }
 //echo '<pre>';
 //print_r($arr);
@@ -1009,6 +1059,7 @@ $renderable = new \tool_assesmentresults\output\index_page(
      @$SESSION->assessmentid,
      @$SESSION->studentid,
      @$SESSION->studentuserid,
+     $selectedstatus,
      @$SESSION->sortval,
      $sortvalold,
      @$SESSION->sorttype,
