@@ -140,13 +140,20 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
     <input id="studentname" type="text" name="studentname" placeholder="Type your Student Name..." value="{{{poststudentname}}}" >
  <input id="studentid" type="hidden" name="studentid" value="{{{sid}}}" />
   </div>
-  
+
+</td>
+<td>
+  <select name="status" id="status">
+    {{#statusoptions}}
+    <option value="{{code}}"{{#selected}} selected{{/selected}}>{{label}}</option>
+    {{/statusoptions}}
+  </select>
 </td>
 <td><div class="autocomplete" style="width:195px;">
     <input id="studentusername" type="text" name="studentusername" placeholder="Type your Student User Name..." value="{{{poststudentusername}}}" >
  <input id="studentuserid" type="hidden" name="studentuserid" value="{{{suid}}}" />
   </div>
-  
+
 </td>
 <td><input class="myButton" type="submit" name="search" id="search" value=" Search " onclick="javascript: if(document.getElementById('coursename').value=='' && document.getElementById('studentname').value=='' && document.getElementById('studentusername').value=='') { alert('Please select any course or student from the drop down list only!'); return false; }" /></td>
 <td>&nbsp;</td><td><input class="myButton" type="button" onclick="javascript: window.location.href='index.php?showall=1';" name="showall" id="showall" value=" Reset " /></td></tr></table>
@@ -199,13 +206,15 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 <form action="" method="POST" name="f" id="f" autocomplete="off">
 
 <table cellspacing="11" cellpadding="10" style="border: 1px solid #aaa;font-size: 14px!important;" width="100%">                                 
-<tr style="background-color: #ddd; font-weight: bold;"><td>ID</td><td><a href="index.php?sorttype=assignment&sort={{{sortval}}}&showallstudent={{{showallstudent}}}" title="Click to sort">ASSIGNMENT</a></td><td>STUDENT</td><td>RESULT</td><td>TRAINER/GRADER</td><td>OBSERVATION CHECKLIST</td></tr>                                                                            
+<tr style="background-color: #ddd; font-weight: bold;"><td>ID</td><td><a href="index.php?sorttype=assignment&sort={{{sortval}}}&showallstudent={{{showallstudent}}}" title="Click to sort">ASSESSMENT</a></td><td>STUDENT NAME</td><td>STATUS</td><td>TRAINER/GRADER</td><td>ACTION FOR TRAINER & ACADEMIC</td><td>STUDENT SUBMISSION LINK</td><td>OBSERVATION CHECKLIST</td></tr>
   {{#user}}                                                                                                             
   <tr><td>{{rowid}}</td>   
           <td><a href="ajax/assignment.php?id={{assignmentid}}&showallstudent={{{showallstudent}}}" rel="modal:open">{{assignmentname}}</a></td>
           <td><a href="ajax/user.php?id={{userid}}" rel="modal:open">{{name}}</a></td>
-         <td>{{result}}</td>
+         <td>{{statuslabel}}</td>
 <td>{{gradername}}</td>
+<td>{{{actionlinks}}}</td>
+<td>{{{studentsubmissionlink}}}</td>
 <td>{{#obs_url}} <a href="{{obs_url}}" target="_blank">{{obs_url}}</a>{{/obs_url}}{{^obs_url}}NA{{/obs_url}}</td>
 </tr>    <input type="hidden" name="updateid" id="updateid" value="{{rowid}}" />
  

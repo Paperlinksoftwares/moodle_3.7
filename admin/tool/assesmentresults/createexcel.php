@@ -4,7 +4,9 @@ require_once($CFG->libdir.'/adminlib.php');
 global $SESSION;
 global $DB;
 require_once($CFG->libdir."/pdfclass/PHPExcel.php");
-require_once($CFG->libdir."/pdfclass/PHPExcel/Writer/Excel5.php"); 
+require_once($CFG->libdir."/pdfclass/PHPExcel/Writer/Excel5.php");
+$allowedstatus = ['satisfactory','notsatisfactory','notyetgraded','nosubmission','openattempt'];
+$selectedstatus = isset($SESSION->statusfilter) ? $SESSION->statusfilter : '';
 if(@$SESSION->courseid>0 && @$SESSION->studentid=='' && @$SESSION->assessmentid=='')
 {
     
@@ -431,30 +433,57 @@ else
 	WHERE mcl.`course` = '".$list->courseid."' AND mcl.`name` LIKE '%".addslashes($list->assignmentname)." | Observation Checklist%'";
 	//echo '<br/>';
 
-	$list_all_deb2 = $DB->get_record_sql($sql_checklist2);
-	if($list_all_deb2->checklistid>0)
-	{
-	$obs_url = $CFG->wwwroot.'/mod/checklist/view.php?id='.$list_all_deb2->checklistid;
-	}
-	else
-	{
-		$obs_url = '';
-	}
-	
-    $arr[] = array('name'=>$list->firstname.' '.$list->lastname, 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'gradeexists'=>$grade_exists,'gradername'=>$gradername,"result"=>$scale_text,'userid'=>$list->userid,'rowid'=>$list->rowid,'cmid'=>$list->cmid,"countsubmission"=>$list->countsubmission,'obs_url'=>$obs_url);
+        $list_all_deb2 = $DB->get_record_sql($sql_checklist2);
+        if($list_all_deb2->checklistid>0)
+        {
+        $obs_url = $CFG->wwwroot.'/mod/checklist/view.php?id='.$list_all_deb2->checklistid;
+        }
+        else
+        {
+                $obs_url = '';
+        }
+
+    $cmid = $list->cmid;
+    $scl = strtolower(trim($scale_text));
+    if ($list->countsubmission == 0) {
+        $statuscode = 'nosubmission';
+        $statuslabel = 'No Submission';
+    } else if ($scl === 'satisfactory') {
+        $statuscode = 'satisfactory';
+        $statuslabel = 'Satisfactory';
+    } else if ($scl === 'not satisfactory') {
+        $statuscode = 'notsatisfactory';
+        $statuslabel = 'Not Satisfactory';
+    } else if (strpos($scl, 'not yet graded') !== false) {
+        $statuscode = 'notyetgraded';
+        $statuslabel = 'Not Yet Graded';
+    } else {
+        $statuscode = 'openattempt';
+        $statuslabel = 'Open Attempt';
+    }
+    $submissionurl = new moodle_url('/mod/assign/view.php', ['id' => $cmid]);
+    $viewurl  = new moodle_url('/mod/assign/view.php', ['id' => $cmid, 'action' => 'grading']);
+    $gradeurl = new moodle_url('/mod/assign/view.php', ['id' => $cmid, 'rownum' => 0, 'action' => 'grader', 'userid' => $list->userid]);
+
+    $arr[] = array('name'=>$list->firstname.' '.$list->lastname, 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'gradeexists'=>$grade_exists,'gradername'=>$gradername,"result"=>$scale_text,'userid'=>$list->userid,'rowid'=>$list->rowid,'cmid'=>$cmid,"countsubmission"=>$list->countsubmission,'obs_url'=>$obs_url,'statuscode'=>$statuscode,'statuslabel'=>$statuslabel,'studenturl'=>$submissionurl->out(false),'viewurl'=>$viewurl->out(false),'gradeurl'=>$gradeurl->out(false));
     unset($grade_val);
     unset($scale_text);
     unset($timemodified);
     unset($list_all_stu);
     unset($activitydate);    
-	unset($obs_url);    
-			unset($sql_checklist2);    
-			unset($list_all_deb2); 
-            
+        unset($obs_url);
+                        unset($sql_checklist2);
+                        unset($list_all_deb2);
+
         }
     }
 }
 
+if ($selectedstatus !== '') {
+    $arr = array_values(array_filter($arr, function($row) use ($selectedstatus) {
+        return $row['statuscode'] === $selectedstatus;
+    }));
+}
 
 $objPHPExcel = new PHPExcel();
 // Set document properties
@@ -471,17 +500,19 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(46);
 $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(41);
 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(28);
 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
-$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(28);
-$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(28);
+$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(40);
+$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(40);
+$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(40);
 
 
 $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', 'ASSIGNMENT')
-            ->setCellValue('B1', 'STUDENT')
-            ->setCellValue('C1', 'RESULT')
+            ->setCellValue('A1', 'ASSESSMENT')
+            ->setCellValue('B1', 'STUDENT NAME')
+            ->setCellValue('C1', 'STATUS')
             ->setCellValue('D1', 'TRAINER/GRADER')
-            ->setCellValue('E1', 'ACTION')
-			->setCellValue('F1', 'OBSERVATION CHECKLIST');
+            ->setCellValue('E1', 'ACTION FOR TRAINER & ACADEMIC')
+            ->setCellValue('F1', 'STUDENT SUBMISSION LINK')
+            ->setCellValue('G1', 'OBSERVATION CHECKLIST');
 
 
 $objPHPExcel->getActiveSheet()
@@ -518,8 +549,14 @@ $objPHPExcel->getActiveSheet()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('82ce73');
-		$objPHPExcel->getActiveSheet()
+      $objPHPExcel->getActiveSheet()
         ->getStyle('F1')
+        ->getFill()
+        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+        ->getStartColor()
+        ->setRGB('82ce73');
+      $objPHPExcel->getActiveSheet()
+        ->getStyle('G1')
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
@@ -529,29 +566,20 @@ $objPHPExcel->getActiveSheet()
 $rowCount=0;
 for($i=2;$i<(count($arr)+2);$i++)
 {
-      if($arr[$rowCount]['result']=='NA / Not yet graded')
-      {
-        $link = $CFG->wwwroot."/mod/assign/view.php?id=".$arr[$rowCount]['cmid']."&rownum=0&action=grader&userid=".$arr[$rowCount]['userid'];
-        $txt = "Click to Grade";
-      }
-      else
-      {
-          $link = $CFG->wwwroot."/mod/assign/view.php?id=".$arr[$rowCount]['cmid']."&action=grading";  
-          $txt = "Click to View";
-      }
       $objPHPExcel->getActiveSheet()->SetCellValue('A'.$i, $arr[$rowCount]['assignmentname']);
       $objPHPExcel->getActiveSheet()->SetCellValue('B'.$i, $arr[$rowCount]['name']);
-      $objPHPExcel->getActiveSheet()->SetCellValue('C'.$i, $arr[$rowCount]['result']);
+      $objPHPExcel->getActiveSheet()->SetCellValue('C'.$i, $arr[$rowCount]['statuslabel']);
       $objPHPExcel->getActiveSheet()->SetCellValue('D'.$i, $arr[$rowCount]['gradername']);
-      $objPHPExcel->getActiveSheet()->SetCellValue('E'.$i, '=Hyperlink("'.$link.'","'.$txt.'")');
-	  if($arr[$rowCount]['obs_url']!='')
-	  {
-			$objPHPExcel->getActiveSheet()->SetCellValue('F'.$i, '=Hyperlink("'.$arr[$rowCount]['obs_url'].'","CHECKLIST LINK")');
-	  }
-	  else
-	  {
-		  	$objPHPExcel->getActiveSheet()->SetCellValue('F'.$i, 'NA');
-	  }
+      $objPHPExcel->getActiveSheet()->SetCellValue('E'.$i, $arr[$rowCount]['viewurl'].' | '.$arr[$rowCount]['gradeurl']);
+      $objPHPExcel->getActiveSheet()->SetCellValue('F'.$i, $arr[$rowCount]['studenturl']);
+          if($arr[$rowCount]['obs_url']!='')
+          {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('G'.$i, $arr[$rowCount]['obs_url']);
+          }
+          else
+          {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('G'.$i, 'NA');
+          }
       if($arr[$rowCount]['countsubmission']>1)
       {
       $objPHPExcel->getActiveSheet()
@@ -560,30 +588,44 @@ for($i=2;$i<(count($arr)+2);$i++)
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('e2b3b3');
-      
+
       $objPHPExcel->getActiveSheet()
         ->getStyle('B'.$i)
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('e2b3b3');
-      
+
       $objPHPExcel->getActiveSheet()
         ->getStyle('C'.$i)
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('e2b3b3');
-      
+
       $objPHPExcel->getActiveSheet()
         ->getStyle('D'.$i)
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('e2b3b3');
-      
+
       $objPHPExcel->getActiveSheet()
         ->getStyle('E'.$i)
+        ->getFill()
+        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+        ->getStartColor()
+        ->setRGB('e2b3b3');
+
+      $objPHPExcel->getActiveSheet()
+        ->getStyle('F'.$i)
+        ->getFill()
+        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+        ->getStartColor()
+        ->setRGB('e2b3b3');
+
+      $objPHPExcel->getActiveSheet()
+        ->getStyle('G'.$i)
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
@@ -591,9 +633,7 @@ for($i=2;$i<(count($arr)+2);$i++)
       }
 
       $rowCount++;
-      unset($link);
-      unset($txt);
-  
+
 }
 
 // Rename worksheet
@@ -601,7 +641,7 @@ $objPHPExcel->getActiveSheet()->setTitle('ACCIT-Result');
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $objPHPExcel->setActiveSheetIndex(0);
 
-// Redirect output to a client’s web browser (Excel5)
+// Redirect output to a clientÂ’s web browser (Excel5)
 header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
 header('Content-Disposition: attachment;filename="Result-'.@date("F j, Y, g:i a",strtotime("now")).'.xls"');
 

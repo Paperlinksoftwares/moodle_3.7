@@ -42,3 +42,16 @@ $string['transferdbintro'] = 'This script will transfer the entire contents of t
 $string['transferdbtoserver'] = 'Transfer this Moodle database to another server';
 $string['transferringdbto'] = 'Transferring this {$a->dbtypefrom} database to {$a->dbtype} database "{$a->dbname}" on "{$a->dbhost}"';
 
+$string['filter_status'] = 'Status';
+$string['status_satisfactory'] = 'Satisfactory';
+$string['status_notsatisfactory'] = 'Not Satisfactory';
+$string['status_notyetgraded'] = 'Not Yet Graded';
+$string['status_nosubmission'] = 'No Submission';
+$string['status_openattempt'] = 'Open Attempt';
+$string['col_assessment'] = 'ASSESSMENT';
+$string['col_studentname'] = 'STUDENT NAME';
+$string['col_status'] = 'STATUS';
+$string['col_trainergrader'] = 'TRAINER/GRADER';
+$string['col_actiontraineracademic'] = 'ACTION FOR TRAINER & ACADEMIC';
+$string['col_studentsubmissionlink'] = 'STUDENT SUBMISSION LINK';
+$string['col_observationchecklist'] = 'OBSERVATION CHECKLIST';

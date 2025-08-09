@@ -11,7 +11,7 @@ class index_page implements renderable, templatable {
 
     public function __construct($arr, $coursestr, $assessmentstr, $studentsstr, $studentsstrusername,
             $page, $total, $poststudentname, $postcoursename, $postassessmentname, $poststudentusername,
-            $cid, $aid, $sid, $suid, $sortval, $sortvalold, $sorttype, $showallstudent, $selectterm,
+            $cid, $aid, $sid, $suid, $selectedstatus, $sortval, $sortvalold, $sorttype, $showallstudent, $selectterm,
             $selectyear, $years) {
         $this->arr = $arr; 
         $this->coursestr = $coursestr;
@@ -28,6 +28,7 @@ class index_page implements renderable, templatable {
         $this->aid = $aid;
         $this->sid = $sid;
         $this->suid = $suid;
+        $this->selectedstatus = $selectedstatus;
         $this->sortval = $sortval;
 		$this->sortvalold = $sortvalold;
         $this->sorttype = $sorttype;
@@ -54,6 +55,15 @@ class index_page implements renderable, templatable {
         $data->aid = $this->aid;
         $data->sid = $this->sid;
         $data->suid = $this->suid;
+        $data->selectedstatus = $this->selectedstatus;
+        $data->statusoptions = [
+            ['code' => '', 'label' => 'All Statuses', 'selected' => ($this->selectedstatus === '')],
+            ['code' => 'satisfactory', 'label' => 'Satisfactory', 'selected' => ($this->selectedstatus === 'satisfactory')],
+            ['code' => 'notsatisfactory', 'label' => 'Not Satisfactory', 'selected' => ($this->selectedstatus === 'notsatisfactory')],
+            ['code' => 'notyetgraded', 'label' => 'Not Yet Graded', 'selected' => ($this->selectedstatus === 'notyetgraded')],
+            ['code' => 'nosubmission', 'label' => 'No Submission', 'selected' => ($this->selectedstatus === 'nosubmission')],
+            ['code' => 'openattempt', 'label' => 'Open Attempt', 'selected' => ($this->selectedstatus === 'openattempt')],
+        ];
         $data->sortval = $this->sortval;
 		$data->sortvalold = $this->sortvalold;
         $data->sorttype = $this->sorttype;
