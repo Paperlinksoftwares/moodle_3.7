@@ -1014,6 +1014,28 @@ foreach($list_scale as $key=>$val)
 
 $list = $DB->get_records_sql($sql);
 
+$sql_finalcompetency = "SELECT gi.gradetype, gi.scaleid, gg.finalgrade FROM {grade_items} gi "
+        . "JOIN {grade_grades} gg ON gg.itemid = gi.id "
+        . "WHERE gi.courseid = '".$val[2]->id."' AND gg.userid = '".$userid."' AND gi.itemname = 'Final Competency'";
+$finalrecord = $DB->get_record_sql($sql_finalcompetency);
+$finalcompetency = '';
+if($finalrecord)
+{
+    if($finalrecord->scaleid>0 && $finalrecord->gradetype!=1)
+    {
+        $grade_val = intval($finalrecord->finalgrade);
+        @$finalcompetency = $scale_array[$finalrecord->scaleid][$grade_val];
+    }
+    else
+    {
+        $finalcompetency = $finalrecord->finalgrade;
+    }
+}
+if(@$finalcompetency=='')
+{
+    $finalcompetency = "NA / Not yet graded";
+}
+
 $arr = array();
 //echo '<pre>';
 //print_r($list); 
@@ -1054,7 +1076,7 @@ foreach($list as $list)
             }
             $grade_exists = '';
             $activitydate = @date("F j, Y, g:i a",$list->activitydate);
-            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>@$list->feedbackposted1,"feedbackposted2"=>@$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission);
+            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>@$list->feedbackposted1,"feedbackposted2"=>@$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission,'finalcompetency'=>$finalcompetency);
             unset($grade_val);
             unset($scale_text);
             unset($timemodified);
@@ -1080,7 +1102,7 @@ foreach($list as $list)
             }
             $grade_exists = '';
             $activitydate = @date("F j, Y, g:i a",$list->activitydate);
-            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission);
+            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission,'finalcompetency'=>$finalcompetency);
            unset($grade_val);
             unset($scale_text);
             unset($timemodified);   
@@ -1119,7 +1141,7 @@ else if($list->scaleid=='' && $list->gradetype==1)
             }
             $grade_exists = '';
             $activitydate = @date("F j, Y, g:i a",$list->activitydate);
-            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission);
+            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission,'finalcompetency'=>$finalcompetency);
            unset($grade_val);
             unset($scale_text);
             unset($timemodified);
@@ -1153,7 +1175,7 @@ else if($list->scaleid=='' && $list->gradetype==1)
             }
             $activitydate = @date("F j, Y, g:i a",$list->activitydate);
             $grade_exists = '';
-            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission);
+            $arr[] = array('baseurl'=>$CFG->wwwroot,'rowid'=>$list->rowid,'userid'=>$list->userid, 'name'=>$list->firstname.' '.$list->lastname, 'username'=>$list->username , 'assignmentname'=>$list->assignmentname,'assignmentid'=>$list->assignmentid,'grademin'=>$list->grademin,'grademax'=>$list->grademax,'timemodified'=>$timemodified,'timemodifiedg'=>'','gradeexists'=>$grade_exists,"result"=>$scale_text,"status"=>$list->status,"feedback"=>$list->feedback,"itemidother"=>$list->itemidother,"feedbackposted1"=>$list->feedbackposted1,"feedbackposted2"=>$list->feedbackposted2,"moduleid"=>$list_module->id,'activitydate'=>$activitydate,'countsubmission'=>$list->countsubmission,'finalcompetency'=>$finalcompetency);
            unset($grade_val);
             unset($scale_text);
             unset($timemodified);           
@@ -1192,9 +1214,10 @@ if($list_all_count>0) {
     <th>Graded On</th>
 	<?php } ?>
     <th>Result</th>
+    <th>Final Competency</th>
     <th>Feedback</th>
   </tr>
-  <?php $cn = 0; $ct = 0; $rate_arr=array(); foreach($arr as $key=>$val) { 
+  <?php $cn = 0; $ct = 0; $rate_arr=array(); foreach($arr as $key=>$val) {
 
 	//$textWithoutLastWord = str_replace('SUBMISSION','',$val['assignmentname']);
 	//$arr_assignname = explode(" ",$val['assignmentname']);
@@ -1233,10 +1256,11 @@ $(document).ready(function(){
    <!-- <td><?php //echo $val['grademin']; ?></td>
     <td><?php //echo $val['grademax']; ?></td> -->
     <?php if(date('Y',$startdate)>2016) { ?>
-	<td><?php echo $val['activitydate']; ?></td>
+        <td><?php echo $val['activitydate']; ?></td>
     <td><?php echo $val['timemodified']; ?></td>
-	<?php } ?>
+        <?php } ?>
     <td><?php echo $val['result']; ?></td>
+    <td><?php echo $val['finalcompetency']; ?></td>
     <td>
         
         
