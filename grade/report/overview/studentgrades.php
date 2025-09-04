@@ -1016,24 +1016,17 @@ $list = $DB->get_records_sql($sql);
 
 $sql_finalcompetency = "SELECT gi.gradetype, gi.scaleid, gg.finalgrade FROM {grade_items} gi "
         . "JOIN {grade_grades} gg ON gg.itemid = gi.id "
-        . "WHERE gi.courseid = '".$val[2]->id."' AND gg.userid = '".$userid."' AND gi.itemname = 'Final Competency'";
+        . "WHERE gi.courseid = '".$val[2]->id."' AND gg.userid = '".$userid."' "
+        . "AND gi.itemtype = 'course' ORDER BY gi.id DESC LIMIT 1";
 $finalrecord = $DB->get_record_sql($sql_finalcompetency);
-$finalcompetency = '';
-if($finalrecord)
-{
-    if($finalrecord->scaleid>0 && $finalrecord->gradetype!=1)
-    {
+$finalcompetency = "NA / Not yet graded";
+if ($finalrecord) {
+    if ($finalrecord->scaleid > 0 && $finalrecord->gradetype != 1) {
         $grade_val = intval($finalrecord->finalgrade);
-        @$finalcompetency = $scale_array[$finalrecord->scaleid][$grade_val];
-    }
-    else
-    {
+        $finalcompetency = $scale_array[$finalrecord->scaleid][$grade_val] ?? "NA / Not yet graded";
+    } else {
         $finalcompetency = $finalrecord->finalgrade;
     }
-}
-if(@$finalcompetency=='')
-{
-    $finalcompetency = "NA / Not yet graded";
 }
 
 $arr = array();
